@@ -1,1 +1,95 @@
-Control de LED RGB con potenciómetro
+/* 
+
+Simulación con arduíno dun potenciómetro e un LED RGB coas súas correspondentes proteccións. 
+O potenciómetro permite mapea seis niveis de cor entre os valores 38000 e 1250000.
+Ó accionar o potenciómetro no LED RGB aparece unha das seiscores posible.O programa tamén saca
+polo monitor serie os valores das seis cores en decimal, hexadecimal e binario.
+
+Autor: Carlos Simil
+Data: abril 2025
+
+*/
+
+
+
+// Declaración de saídas analóxicas
+
+#define led_r 6
+#define led_g 5
+#define led_b 3
+#define pot A0
+
+
+// Declaración de variables
+
+
+bool ANODO_COMUN = false;
+
+  
+void setup() {
+
+  pinMode (led_r, OUTPUT);
+  pinMode (led_g, OUTPUT);
+  pinMode (led_b, OUTPUT);
+  
+  
+  Serial.begin (9600); // Inicio do monitor serie
+  
+}
+
+
+void loop () {
+
+int valor = analogRead (pot);
+  
+  const long minimoCOR = 38000;
+  const long maximoCOR = 1250000;
+  
+ 
+// Mapeo de color entre os 6 valores de entrada
+  
+  int color = map (valor, 0, 1023, 0, 5);
+  
+    
+// Valores RGB
+  
+  int red = (valor >> 16) & 0xFF;
+  int green = (valor >> 8) & 0xFF;
+  int blue = valor & 0xFF;
+
+           
+  
+// Rango (0 -255)
+  
+  // Ánodo común = true
+
+  red = 255 - red;
+  green = 255 - green;
+  blue = 255 - blue;
+  
+  
+  // Ánodo común = false
+  
+  analogWrite(led_r, red);
+  analogWrite(led_g, green);
+  analogWrite(led_b, blue);
+  
+  
+  
+// Monitor serie. Primeira liña
+  
+	Serial.println("DECIMAL             HEXADECIMAL                  BINARIO  ");
+  
+
+// Monitor serie. Segunda liña
+	Serial.print(valor);
+	Serial.print("               ");
+	Serial.print(valor, HEX);
+	Serial.print("                   ");
+	Serial.println(valor, BIN);
+  
+// Separación
+  
+	Serial.println("");
+    
+}   
